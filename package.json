@@ -1,0 +1,18 @@
+{
+  "name": "week2lab",
+  "version": "1.0.0",
+  "description": "this is my first API",
+  "main": "index.js",
+  "scripts": {
+    "test": "git repository"
+  },
+  "keywords": [
+    "first",
+    "api"
+  ],
+  "author": "AMD",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.18.2"
+  }
+}
