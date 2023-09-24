@@ -7,17 +7,15 @@ let postCount = 0;
 let deleteCount = 0;
 
 let errors = require('restify-errors');
-let restify = require('restify')
+let restify = require('restify');
+// Get a persistence engine for the products
+let productsSave = require('save')('products');
+// Create the restify server
+let server = restify.createServer({ name: SERVER_NAME});
 
+func Process_Counter () {}
 
-
-  // Get a persistence engine for the products
-  , productsSave = require('save')('products')
-
-  // Create the restify server
-  , server = restify.createServer({ name: SERVER_NAME})
-
-  server.listen(PORT, HOST, function () {
+server.listen(PORT, HOST, function () {
   console.log('Server %s listening at %s', server.name, server.url)
   console.log('%s method: GET, POST, DELETE', server.url )
   console.log('**** Resources: ****')
@@ -159,6 +157,26 @@ server.del('/products/:id', function (req, res, next) {
   console.log('POST /products params=>' + JSON.stringify(req.params));
   // Delete the product with the persistence engine
   productsSave.delete(req.params.id, function (error, product) {
+
+    // If there are any errors, pass them to next in the correct format
+    if (error) return next(new Error(JSON.stringify(error.errors)))
+
+    // Send a 204 response
+    res.send(204)
+  })
+  console.log('products DELETE: response sent');
+  
+  deleteCount++;
+  console.log('Processed Request Count> GET ', getCount, ', POST: ', postCount, ', DELETE: ', deleteCount);
+
+})
+
+// Delete ALL products
+server.del('/products', function (req, res, next) {
+  console.log('products DELETE: received request');
+  console.log('POST /products params=>' + JSON.stringify(req.params));
+  // Delete the product with the persistence engine
+  productsSave.deleteMany({}, function (error, product) {
 
     // If there are any errors, pass them to next in the correct format
     if (error) return next(new Error(JSON.stringify(error.errors)))
