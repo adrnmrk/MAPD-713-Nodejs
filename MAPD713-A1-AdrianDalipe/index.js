@@ -16,7 +16,7 @@ const processCounter = new ProcessCounter();
 
 server.listen(PORT, HOST, function () {
   console.log('Server %s listening at %s', server.name, server.url)
-  console.log('%s method: GET, POST, DELETE', server.url )
+  console.log('%s method: GET, POST, PUT, DELETE', server.url )
   console.log('**** Resources: ****')
   console.log('********************')
   console.log(' /products')
@@ -38,6 +38,7 @@ server.get('/products', function (req, res, next) {
     res.send(products)
   })
   console.log('products GET: response sent');
+  //increment process counter
   processCounter.incrementCount('GET');
 })
 
@@ -103,7 +104,6 @@ server.post('/products', function (req, res, next) {
     // Send the product if no issues
     res.send(201, product)
   })
-
   processCounter.incrementCount('POST');
 
 
