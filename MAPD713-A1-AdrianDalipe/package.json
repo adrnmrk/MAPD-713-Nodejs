@@ -1,3 +1,4 @@
+
 {
     "name": "ProductsApi",
     "version": "1.2.0",
@@ -8,7 +9,7 @@
         "npm": ">=2.1.x"
     },
     "authors": [
-        "Viktor", "AdrianD"
+        "Viktor"
     ],
     "license": "MIT",
     "dependencies": {

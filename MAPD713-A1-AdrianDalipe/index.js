@@ -1,10 +1,9 @@
+const ProcessCounter = require ('./ProcessCounter.js')
+
 let SERVER_NAME = 'products-api'
 let PORT = 5050;
 let HOST = '127.0.0.1';
-//Processed requests counter
-let getCount = 0;
-let postCount = 0;
-let deleteCount = 0;
+
 
 let errors = require('restify-errors');
 let restify = require('restify');
@@ -13,7 +12,7 @@ let productsSave = require('save')('products');
 // Create the restify server
 let server = restify.createServer({ name: SERVER_NAME});
 
-func Process_Counter () {}
+const processCounter = new ProcessCounter();
 
 server.listen(PORT, HOST, function () {
   console.log('Server %s listening at %s', server.name, server.url)
@@ -39,9 +38,7 @@ server.get('/products', function (req, res, next) {
     res.send(products)
   })
   console.log('products GET: response sent');
-  getCount++;
-  console.log('Processed Request Count> GET ', getCount, ', POST: ', postCount, ', DELETE: ', deleteCount);
-
+  processCounter.incrementCount('GET');
 })
 
 // Get a single product by their product id
@@ -59,8 +56,8 @@ server.get('/products/:id', function (req, res, next) {
     if (product) {
       // Send the product if no issues
       res.send(product)
-      getCount++;
-      console.log('Processed Request Count> GET: ', getCount, ', POST: ', postCount, ', DELETE: ', deleteCount);
+      processCounter.incrementCount('GET');
+
 
     } else {
       // Send 404 header if the product doesn't exist
@@ -106,8 +103,9 @@ server.post('/products', function (req, res, next) {
     // Send the product if no issues
     res.send(201, product)
   })
-  postCount++;
-  console.log('Processed Request Count> GET ', getCount, ', POST: ', postCount, ', DELETE: ', deleteCount);
+
+  processCounter.incrementCount('POST');
+
 
 })
 
@@ -149,6 +147,8 @@ server.put('/products/:id', function (req, res, next) {
     // Send a 200 OK response
     res.send(200)
   })
+  processCounter.incrementCount('PUT');
+
 })
 
 // Delete product with the given id
@@ -166,8 +166,8 @@ server.del('/products/:id', function (req, res, next) {
   })
   console.log('products DELETE: response sent');
   
-  deleteCount++;
-  console.log('Processed Request Count> GET ', getCount, ', POST: ', postCount, ', DELETE: ', deleteCount);
+  processCounter.incrementCount('DELETE');
+
 
 })
 
@@ -186,8 +186,8 @@ server.del('/products', function (req, res, next) {
   })
   console.log('products DELETE: response sent');
   
-  deleteCount++;
-  console.log('Processed Request Count> GET ', getCount, ', POST: ', postCount, ', DELETE: ', deleteCount);
+  processCounter.incrementCount('DELETE');
+
 
 })
 
