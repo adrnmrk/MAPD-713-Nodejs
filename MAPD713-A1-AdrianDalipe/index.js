@@ -1,9 +1,15 @@
 let SERVER_NAME = 'products-api'
 let PORT = 5050;
 let HOST = '127.0.0.1';
+//Processed requests counter
+let getCount = 0;
+let postCount = 0;
+let deleteCount = 0;
 
 let errors = require('restify-errors');
 let restify = require('restify')
+
+
 
   // Get a persistence engine for the products
   , productsSave = require('save')('products')
@@ -25,6 +31,7 @@ server.use(restify.plugins.bodyParser());
 
 // Get all products in the system
 server.get('/products', function (req, res, next) {
+  console.log('products GET: received request');
   console.log('GET /products params=>' + JSON.stringify(req.params));
 
   // Find every entity within the given collection
@@ -33,11 +40,17 @@ server.get('/products', function (req, res, next) {
     // Return all of the products in the system
     res.send(products)
   })
+  console.log('products GET: response sent');
+  getCount++;
+  console.log('Processed Request Count> GET ', getCount, ', POST: ', postCount, ', DELETE: ', deleteCount);
+
 })
 
 // Get a single product by their product id
 server.get('/products/:id', function (req, res, next) {
+  console.log('products GET: received request');
   console.log('GET /products/:id params=>' + JSON.stringify(req.params));
+  console.log('products GET: sending response')
 
   // Find a single product by their id within save
   productsSave.findOne({ _id: req.params.id }, function (error, product) {
@@ -48,6 +61,9 @@ server.get('/products/:id', function (req, res, next) {
     if (product) {
       // Send the product if no issues
       res.send(product)
+      getCount++;
+      console.log('Processed Request Count> GET: ', getCount, ', POST: ', postCount, ', DELETE: ', deleteCount);
+
     } else {
       // Send 404 header if the product doesn't exist
       res.send(404)
@@ -57,8 +73,10 @@ server.get('/products/:id', function (req, res, next) {
 
 // Create a new product
 server.post('/products', function (req, res, next) {
+  console.log('products POST: received request')
   console.log('POST /products params=>' + JSON.stringify(req.params));
   console.log('POST /products body=>' + JSON.stringify(req.body));
+  console.log('products POST: response sent')
 
   // validation of manadatory fields
   if (req.body.name === undefined ) {
@@ -75,6 +93,7 @@ server.post('/products', function (req, res, next) {
   }
 //JSON paylod for new products
   let newproduct = {
+    productId: req.body.productId,
 		name: req.body.name, 
 		price: req.body.price,
     quantity: req.body.quantity
@@ -89,6 +108,9 @@ server.post('/products', function (req, res, next) {
     // Send the product if no issues
     res.send(201, product)
   })
+  postCount++;
+  console.log('Processed Request Count> GET ', getCount, ', POST: ', postCount, ', DELETE: ', deleteCount);
+
 })
 
 // Update a product by their id
@@ -96,6 +118,10 @@ server.put('/products/:id', function (req, res, next) {
   console.log('POST /products params=>' + JSON.stringify(req.params));
   console.log('POST /products body=>' + JSON.stringify(req.body));
   // validation of manadatory fields
+  if (req.body.productId === undefined ) {
+    // If there are any errors, pass them to next in the correct format
+    return next(new errors.BadRequestError('productID must be supplied'))
+  }
   if (req.body.name === undefined ) {
     // If there are any errors, pass them to next in the correct format
     return next(new errors.BadRequestError('name must be supplied'))
@@ -110,7 +136,8 @@ server.put('/products/:id', function (req, res, next) {
   }
   
   let newproduct = {
-		_id: req.body.id,
+    _id: req.params.id,
+		productId: req.body.productId,
 		name: req.body.name, 
 		price: req.body.price,
     quantity: req.body.quantity
@@ -128,6 +155,7 @@ server.put('/products/:id', function (req, res, next) {
 
 // Delete product with the given id
 server.del('/products/:id', function (req, res, next) {
+  console.log('products DELETE: received request');
   console.log('POST /products params=>' + JSON.stringify(req.params));
   // Delete the product with the persistence engine
   productsSave.delete(req.params.id, function (error, product) {
@@ -138,6 +166,11 @@ server.del('/products/:id', function (req, res, next) {
     // Send a 204 response
     res.send(204)
   })
+  console.log('products DELETE: response sent');
+  
+  deleteCount++;
+  console.log('Processed Request Count> GET ', getCount, ', POST: ', postCount, ', DELETE: ', deleteCount);
+
 })
 
 
