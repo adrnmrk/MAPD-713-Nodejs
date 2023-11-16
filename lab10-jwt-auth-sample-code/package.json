@@ -1,0 +1,20 @@
+{
+    "name": "UsersApi",
+    "version": "1.2.0",
+    "description": "REST API - Users- JWT Auth example",
+    "main": "index.js",
+    "engines": {
+        "node": ">=14.0.0",
+        "npm": ">=2.1.x"
+    },
+    "authors": [
+        "Viktor"
+    ],
+    "license": "MIT",
+    "dependencies": {
+        "jsonwebtoken": "=9.0.0",
+        "restify": "=11.1.0",
+        "restify-jwt-community": "=2.0.0",
+        "save": "=2.9.0"
+    }
+}
